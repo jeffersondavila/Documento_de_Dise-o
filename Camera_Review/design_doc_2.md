@@ -30,6 +30,13 @@ poner diagramas de secuencia, uml, etc
 
 ### Modelo de datos
 Poner diseño de entidades, Jsons, tablas, diagramas entidad relación, etc..
+
+### Plan de pruebas
+Crear proyecto de pruebas que valide los siguientes casos de uso.
+* Registrar usuario, crear review, simular que visitante puede leer el review escrito (END TO END)
+
+### Integración continua
+
 ---
 ## Limitaciones
 Lista de limitaciones conocidas. Puede ser en formato de lista.
