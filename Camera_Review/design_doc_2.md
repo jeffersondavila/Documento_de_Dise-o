@@ -23,19 +23,74 @@ Descripción...
 
 * Como usuario no registrado me gustaria poder subir una review de una camara
 ---
-## Arquitectura
+## Infraestructura
 
-### Diagramas
-poner diagramas de secuencia, uml, etc
+### Diagrama caso de uso
+
+### Arquitectura
+
+### Diseño a Bajo Nivel para el Sistema de Reviews
+
+1. Subir Review (Web API)
+**Componente:** Web API para recibir la reseña del usuario.
+
+- **Implementación:**
+  - Utiliza **ASP.NET Core Web API** como el punto de entrada para la subida de reseñas.
+  - Crea un endpoint POST en la API para recibir los datos de la reseña. Este endpoint recibe los datos en el cuerpo de la solicitud.
+  - El API valida los datos de entrada (asegura que la reseña tenga el formato correcto, por ejemplo, título, puntuación, autor, etc.).
+
+- **Tecnología:**
+  - **ASP.NET Core Web API** para el servicio de subida de reseñas.
+  - Se puede usar **Azure API Management** para gestionar mejor las solicitudes, agregar autenticación y limitar la tasa de acceso (rate limiting).
+
+2. Función Serverless (Azure Function)
+**Componente:** Función que procesa la reseña y la guarda en la base de datos NoSQL.
+
+- **Implementación:**
+  - Crea una **Azure Function** en C# que se active cuando la API envíe la reseña. Esta función puede ser del tipo HTTP Trigger o conectada a una cola si deseas desacoplar más el sistema.
+  - La función procesará la reseña y la almacenará en una base de datos NoSQL (**MongoDB** en este caso).
+
+- **Tecnología:**
+  - **Azure Functions** con **MongoDB** para almacenar los datos de forma escalable.
+
+3. Base de Datos NoSQL (MongoDB)
+**Componente:** Almacenar las reseñas en una base de datos NoSQL para accesos rápidos.
+
+- **Implementación:**
+  - Utiliza **MongoDB** como la base de datos NoSQL, debido a su capacidad para escalar horizontalmente y su modelo flexible de almacenamiento de documentos JSON.
+  - Cada reseña se almacena como un documento JSON, y las consultas rápidas pueden basarse en índices predefinidos (por ejemplo, `author`, `date`, etc.).
+
+- **Tecnología:**
+  - **MongoDB** como base de datos NoSQL.
+
+4. Proceso para Obtener Información e Inyectar a BD (SQL Server)
+**Componente:** Proceso que toma las reseñas de **MongoDB** y las transforma para **SQL Server**.
+
+- **Implementación:**
+  - Puedes crear una **Azure Function** adicional o un **Azure Logic App** que periódicamente obtenga las reseñas de MongoDB y las inyecte en SQL Server.
+  - Este proceso puede consultar las reseñas de MongoDB, transformarlas según el esquema SQL, y luego insertarlas en SQL Server.
+
+- **Tecnología:**
+  - **Azure Functions** o **Azure Logic Apps** para el proceso de sincronización.
+  - **Entity Framework Core** o **Dapper** para interactuar con **SQL Server**.
+
+5. Base de Datos SQL (SQL Server)
+**Componente:** Almacenar las reseñas para análisis estructurado en una base de datos relacional.
+
+- **Implementación:**
+  - Crea una base de datos **SQL Server** con un esquema para almacenar las reseñas de forma estructurada.
+  - Los datos en SQL Server se utilizan para generar reportes, análisis y posiblemente generar recomendaciones basadas en las reseñas.
+
+- **Tecnología:**
+  - **SQL Server** como base de datos relacional para reportes y análisis.
+
+### Plan de prueba
 
 ### Modelo de datos
 Poner diseño de entidades, Jsons, tablas, diagramas entidad relación, etc..
 
-### Plan de pruebas
-Crear proyecto de pruebas que valide los siguientes casos de uso.
-* Registrar usuario, crear review, simular que visitante puede leer el review escrito (END TO END)
+### Integracion continua
 
-### Integración continua
 
 ---
 ## Limitaciones
