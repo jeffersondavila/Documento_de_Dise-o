@@ -110,13 +110,79 @@ Debido al creciente cambio climatico y a la escasez de recursos naturales, la ag
    - **Descripción:** El sistema ofrecería contenido educativo personalizado para mejorar las habilidades y conocimientos de los agricultores.
    - **Motivo para No Ser Soportado:** Se ha decidido no incluir este caso de uso en el alcance actual del proyecto, posiblemente para enfocarse en otros aspectos más críticos del sistema.
 ---
-## Arquitectura
+## Infraestructura
 
-### Diagramas
-poner diagramas de secuencia, uml, etc
+### Diagrama caso de uso
+
+### Arquitectura
+
+![Arquitectura](Arquitectura2.png)
+
+### Diseño de bajo nivel
+
+1. **Web / Mobile**
+- **Tecnología**:
+  - **Web**: Blazor.
+  - **Móvil**: .NET MAUI (anteriormente Xamarin).
+- **Función**:
+  - Proveer la interfaz de usuario.
+  - Interactuar con el usuario final.
+  - Enviar y recibir datos a través de la API.
+
+2. **API**
+- **Tecnología**: ASP.NET Core Web API.
+- **Función**:
+  - Actuar como el punto de conexión entre el frontend y los servicios backend.
+  - Autenticar y autorizar solicitudes.
+  - Enrutar comandos a los servicios apropiados.
+
+3. **Load Balancer (LB)**
+- **Tecnología**: NGINX.
+- **Función**:
+  - Distribuir el tráfico de entrada entre múltiples instancias de la API.
+  - Mejorar la redundancia y el rendimiento del sistema.
+
+4. **Caché**
+- **Tecnología**: Redis.
+- **Función**:
+  - Almacenar respuestas de datos frecuentes para mejorar la velocidad de respuesta.
+  - Reducir la carga en las bases de datos.
+
+5. **Función Serverless**
+- **Tecnología**: Azure Functions.
+- **Función**:
+  - Procesar datos de los sensores de manera escalable.
+  - Operar eficientemente sin gestionar infraestructura.
+
+6. **Base de Datos NoSQL**
+- **Tecnología**: MongoDB.
+- **Función**:
+  - Almacenar datos no estructurados o semi-estructurados.
+  - Ideal para manejar grandes volúmenes de datos con estructuras variadas.
+
+7. **Base de Datos SQL**
+- **Tecnología**: PostgreSQL.
+- **Función**:
+  - Manejar transacciones y consultas complejas.
+  - Almacenar datos que requieren estructura relacional.
+
+8. **Servidor de Lectura / Clúster**
+- **Tecnología**: Docker Swarm.
+- **Función**:
+  - Manejar contenedores que procesan lecturas de datos intensivas.
+  - Distribuir la carga entre múltiples nodos para mejorar la eficiencia.
+
+Conexión y Seguridad
+- **Seguridad**:
+  - Implementación de autenticación y autorización con JSON Web Tokens (JWT).
+  - Uso de SSL/TLS para todas las conexiones.
+
+### Plan de prueba
 
 ### Modelo de datos
 Poner diseño de entidades, Jsons, tablas, diagramas entidad relación, etc..
+
+### Integracion continua
 
 ---
 ## Limitaciones
