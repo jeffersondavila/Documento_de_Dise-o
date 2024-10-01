@@ -1,4 +1,5 @@
-﻿using BlogPersonal.Models;
+﻿using BlogPersonal.DTO;
+using BlogPersonal.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlogPersonal.Services
@@ -12,14 +13,41 @@ namespace BlogPersonal.Services
 			_blogContext = blogContext;
 		}
 
-		public async Task <IEnumerable<Blog>> GetAllBlog()
+		public async Task <IEnumerable<BlogDto?>> GetAllBlog()
 		{
-			return await _blogContext.Blogs.ToListAsync();
+			var blog = await _blogContext.Blogs
+						.Select(x => new BlogDto
+						{
+							CodigoBlog = x.CodigoBlog,
+							Titulo = x.Titulo,
+							Contenido = x.Contenido,
+							FechaCreacion = x.FechaCreacion,
+							FechaModificacion = x.FechaModificacion,
+							CodigoUsuario = x.CodigoUsuarioNavigation.CodigoUsuario,
+							CodigoEstadoBlog = x.CodigoEstadoBlogNavigation.CodigoEstadoBlog
+						})
+						.ToListAsync();
+
+			return blog;
 		}
 
-		public async Task<Blog?> GetBlog(int id)
+		public async Task<BlogDto?> GetBlog(int id)
 		{
-			return await _blogContext.Blogs.FirstOrDefaultAsync(b => b.CodigoBlog == id);
+			var blog = await _blogContext.Blogs
+						.Where(b => b.CodigoBlog == id)
+						.Select(x => new BlogDto
+						{
+							CodigoBlog = x.CodigoBlog,
+							Titulo = x.Titulo,
+							Contenido = x.Contenido,
+							FechaCreacion = x.FechaCreacion,
+							FechaModificacion = x.FechaModificacion,
+							CodigoUsuario = x.CodigoUsuarioNavigation.CodigoUsuario,
+							CodigoEstadoBlog = x.CodigoEstadoBlogNavigation.CodigoEstadoBlog
+						})
+						.FirstOrDefaultAsync();
+
+			return blog;
 		}
 
 		public async Task SaveBlog(Blog blog)
@@ -56,8 +84,8 @@ namespace BlogPersonal.Services
 
 	public interface IBlogService
 	{
-		Task<IEnumerable<Blog>> GetAllBlog();
-		Task<Blog?> GetBlog(int id);
+		Task<IEnumerable<BlogDto?>> GetAllBlog();
+		Task<BlogDto?> GetBlog(int id);
 		Task SaveBlog(Blog blog);
 		Task UpdateBlog(Blog blog, int id);
 		Task DeleteBlog(int id);
