@@ -109,3 +109,16 @@ El sistema debe permitir a los usuarios autenticados crear, editar y eliminar co
 
 **Nota:** En el plan estándar, si se excede el límite de 100 GB de ancho de banda, se cobrará $0.20 USD por cada GB adicional.
 
+## Diseño
+
+### Paquetes
+- Entity Framework CORE
+- Entity Framework In Memory
+- Entity Framework SQL SERVER
+- Entity Framework Tools
+
+### Crear Modelos
+```csharp
+Scaffold-DbContext "Data Source=LAPTOP-07NSNMOC;Initial Catalog=PersonalBlog;user id=sa;password=loc@del@rea;TrustServerCertificate=True" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models
+```
+
