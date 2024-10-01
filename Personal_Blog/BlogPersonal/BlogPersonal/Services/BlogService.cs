@@ -5,7 +5,7 @@ namespace BlogPersonal.Services
 {
 	public class BlogService : IBlogService
 	{
-		PersonalBlogContext _blogContext;
+		private readonly PersonalBlogContext _blogContext;
 
 		public BlogService(PersonalBlogContext blogContext)
 		{

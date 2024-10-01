@@ -122,3 +122,7 @@ El sistema debe permitir a los usuarios autenticados crear, editar y eliminar co
 Scaffold-DbContext "Data Source=LAPTOP-07NSNMOC;Initial Catalog=PersonalBlog;user id=sa;password=loc@del@rea;TrustServerCertificate=True" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models
 ```
 
+### Crear .gitignore
+```csharp
+dotnet new gitignore
+```
