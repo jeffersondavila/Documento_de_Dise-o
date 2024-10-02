@@ -126,3 +126,8 @@ Scaffold-DbContext "Data Source=LAPTOP-07NSNMOC;Initial Catalog=PersonalBlog;use
 ```csharp
 dotnet new gitignore
 ```
+
+### Arquitectura Codigo
+- Model
+- Controller
+- Services
