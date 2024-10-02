@@ -22,9 +22,7 @@ namespace BlogPersonal.Services
 							Titulo = x.Titulo,
 							Contenido = x.Contenido,
 							FechaCreacion = x.FechaCreacion,
-							FechaModificacion = x.FechaModificacion,
-							CodigoUsuario = x.CodigoUsuarioNavigation.CodigoUsuario,
-							CodigoEstadoBlog = x.CodigoEstadoBlogNavigation.CodigoEstadoBlog
+							FechaModificacion = x.FechaModificacion
 						})
 						.ToListAsync();
 
@@ -41,9 +39,7 @@ namespace BlogPersonal.Services
 							Titulo = x.Titulo,
 							Contenido = x.Contenido,
 							FechaCreacion = x.FechaCreacion,
-							FechaModificacion = x.FechaModificacion,
-							CodigoUsuario = x.CodigoUsuarioNavigation.CodigoUsuario,
-							CodigoEstadoBlog = x.CodigoEstadoBlogNavigation.CodigoEstadoBlog
+							FechaModificacion = x.FechaModificacion
 						})
 						.FirstOrDefaultAsync();
 

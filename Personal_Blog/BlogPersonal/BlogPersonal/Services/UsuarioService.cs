@@ -1,17 +1,19 @@
-﻿using BlogPersonal.Models;
+﻿using BlogPersonal.DTO;
+using BlogPersonal.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace BlogPersonal.Services
 {
 	public class UsuarioService : IUsuarioService
 	{
 		private readonly PersonalBlogContext _blogContext;
+		private readonly PasswordHasher<Usuario> _passwordHasher;
 
 		public UsuarioService(PersonalBlogContext blogContext)
 		{
 			_blogContext = blogContext;
+			_passwordHasher = new PasswordHasher<Usuario>();
 		}
 
 		public async Task<bool> RegistrarUsuario(Usuario usuario)
@@ -23,7 +25,7 @@ namespace BlogPersonal.Services
 				return false;
 			}
 
-			usuario.Password = HashPassword(usuario.Password);
+			usuario.Password = _passwordHasher.HashPassword(usuario, usuario.Password);
 
 			_blogContext.Usuarios.Add(usuario);
 			await _blogContext.SaveChangesAsync();
@@ -31,37 +33,45 @@ namespace BlogPersonal.Services
 			return true;
 		}
 
-		public async Task<Usuario?> IngresoUsuario(string correo, string password)
+		public async Task<UsuarioDto?> IngresoUsuario(string correo, string password)
 		{
-			var usuarioActual = await _blogContext.Usuarios.FirstOrDefaultAsync(u => u.Correo == correo);
+			var usuarioActual = await _blogContext.Usuarios
+				.Include(u => u.Blogs)
+				.FirstOrDefaultAsync(u => u.Correo == correo);
 
-			if (usuarioActual != null && VerificarPassword(password, usuarioActual.Password))
+			if (usuarioActual != null && VerificarPassword(usuarioActual, password))
 			{
-				return usuarioActual;
+				return new UsuarioDto
+				{
+					CodigoUsuario = usuarioActual.CodigoUsuario,
+					Nombre = usuarioActual.Nombre,
+					Correo = usuarioActual.Correo,
+					CodigoEstadoUsuario = usuarioActual.CodigoEstadoUsuario,
+					Blogs = usuarioActual.Blogs.Select(b => new BlogDto
+					{
+						CodigoBlog = b.CodigoBlog,
+						Titulo = b.Titulo,
+						Contenido = b.Contenido,
+						FechaCreacion = b.FechaCreacion,
+						FechaModificacion = b.FechaModificacion
+					}).ToList()
+				};
 			}
 
 			return null;
 		}
 
-		private string HashPassword(string password)
-		{
-			using (var sha256 = SHA256.Create())
-			{
-				var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-				return BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
-			}
-		}
 
-		private bool VerificarPassword(string passwordIngresada, string passwordAlmacenada)
+		private bool VerificarPassword(Usuario usuario, string passwordIngresada)
 		{
-			var hashedPassword = HashPassword(passwordIngresada);
-			return hashedPassword == passwordAlmacenada;
+			var result = _passwordHasher.VerifyHashedPassword(usuario, usuario.Password, passwordIngresada);
+			return result == PasswordVerificationResult.Success;
 		}
 	}
 
 	public interface IUsuarioService
 	{
 		Task<bool> RegistrarUsuario(Usuario usuario);
-		Task<Usuario?> IngresoUsuario(string correo, string password);
+		Task<UsuarioDto?> IngresoUsuario(string correo, string password);
 	}
 }
