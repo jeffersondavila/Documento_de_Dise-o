@@ -22,7 +22,9 @@ namespace BlogPersonal.Services
 							Titulo = x.Titulo,
 							Contenido = x.Contenido,
 							FechaCreacion = x.FechaCreacion,
-							FechaModificacion = x.FechaModificacion
+							FechaModificacion = x.FechaModificacion,
+							CodigoUsuario = x.CodigoUsuario,
+							CodigoEstadoBlog = x.CodigoEstadoBlog
 						})
 						.ToListAsync();
 
@@ -39,29 +41,43 @@ namespace BlogPersonal.Services
 							Titulo = x.Titulo,
 							Contenido = x.Contenido,
 							FechaCreacion = x.FechaCreacion,
-							FechaModificacion = x.FechaModificacion
+							FechaModificacion = x.FechaModificacion,
+							CodigoUsuario = x.CodigoUsuario,
+							CodigoEstadoBlog = x.CodigoEstadoBlog
 						})
 						.FirstOrDefaultAsync();
 
 			return blog;
 		}
 
-		public async Task SaveBlog(Blog blog)
+		public async Task<int> SaveBlog(BlogDto blogDto)
 		{
+			var blog = new Blog();
+			blog.CodigoBlog = blogDto.CodigoBlog;
+			blog.Titulo = blogDto.Titulo ?? "";
+			blog.Contenido = blogDto.Contenido ?? "";
+			blog.FechaCreacion = blogDto.FechaCreacion;
+			blog.FechaModificacion = blogDto.FechaModificacion;
+			blog.CodigoUsuario = blogDto.CodigoUsuario;
+			blog.CodigoEstadoBlog = blogDto.CodigoEstadoBlog;
+
 			_blogContext.Blogs.Add(blog);
 			await _blogContext.SaveChangesAsync();
+
+			return blog.CodigoBlog;
 		}
 
-		public async Task UpdateBlog(Blog blog, int id)
+		public async Task UpdateBlog(BlogDto blogDto, int id)
 		{
 			var blogActual = await _blogContext.Blogs.FirstOrDefaultAsync(b => b.CodigoBlog == id);
 
 			if (blogActual != null)
 			{
-				blogActual.Titulo = blog.Titulo;
-				blogActual.Contenido = blog.Contenido;
-				blogActual.FechaModificacion = blog.FechaModificacion;
-				blogActual.CodigoEstadoBlog = blog.CodigoEstadoBlog;
+				blogActual.Titulo = blogDto.Titulo ?? "" ;
+				blogActual.Contenido = blogDto.Contenido ?? "";
+				blogActual.FechaModificacion = blogDto.FechaModificacion;
+				blogActual.CodigoUsuario= blogDto.CodigoUsuario;
+				blogActual.CodigoEstadoBlog = blogDto.CodigoEstadoBlog;
 				await _blogContext.SaveChangesAsync();
 			}
 		}
@@ -82,8 +98,8 @@ namespace BlogPersonal.Services
 	{
 		Task<IEnumerable<BlogDto?>> GetAllBlog();
 		Task<BlogDto?> GetBlog(int id);
-		Task SaveBlog(Blog blog);
-		Task UpdateBlog(Blog blog, int id);
+		Task<int> SaveBlog(BlogDto blogDto);
+		Task UpdateBlog(BlogDto blogDto, int id);
 		Task DeleteBlog(int id);
 	}
 }

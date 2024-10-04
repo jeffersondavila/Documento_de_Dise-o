@@ -7,5 +7,7 @@
 		public string? Contenido { get; set; }
 		public DateTime FechaCreacion { get; set; }
 		public DateTime? FechaModificacion { get; set; }
+		public int CodigoUsuario {  get; set; }
+		public int CodigoEstadoBlog {  get; set; }
 	}
 }
