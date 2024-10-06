@@ -52,13 +52,15 @@ namespace BlogPersonal.Services
 
 		public async Task<int> SaveBlog(BlogDto blogDto)
 		{
-			var blog = new Blog();
-			blog.Titulo = blogDto.Titulo ?? "";
-			blog.Contenido = blogDto.Contenido ?? "";
-			blog.FechaCreacion = blogDto.FechaCreacion;
-			blog.FechaModificacion = blogDto.FechaModificacion;
-			blog.CodigoUsuario = blogDto.CodigoUsuario;
-			blog.CodigoEstadoBlog = blogDto.CodigoEstadoBlog;
+			var blog = new Blog
+			{
+				Titulo = blogDto.Titulo ?? "",
+				Contenido = blogDto.Contenido ?? "",
+				FechaCreacion = blogDto.FechaCreacion,
+				FechaModificacion = blogDto.FechaModificacion,
+				CodigoUsuario = blogDto.CodigoUsuario,
+				CodigoEstadoBlog = blogDto.CodigoEstadoBlog
+			};
 
 			_blogContext.Blogs.Add(blog);
 			await _blogContext.SaveChangesAsync();
