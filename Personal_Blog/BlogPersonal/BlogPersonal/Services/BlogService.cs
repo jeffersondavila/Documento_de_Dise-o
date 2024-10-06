@@ -52,6 +52,18 @@ namespace BlogPersonal.Services
 
 		public async Task<int> SaveBlog(BlogDto blogDto)
 		{
+			var usuarioExiste = await _blogContext.Usuarios.AnyAsync(u => u.CodigoUsuario == blogDto.CodigoUsuario);
+			if (!usuarioExiste)
+			{
+				throw new ArgumentException("El usuario proporcionado no existe.");
+			}
+
+			var estadoBlogExiste = await _blogContext.EstadoBlogs.AnyAsync(e => e.CodigoEstadoBlog == blogDto.CodigoEstadoBlog);
+			if (!estadoBlogExiste)
+			{
+				throw new ArgumentException("El estado del blog proporcionado no existe.");
+			}
+
 			var blog = new Blog
 			{
 				Titulo = blogDto.Titulo ?? "",
