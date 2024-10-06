@@ -53,7 +53,6 @@ namespace BlogPersonal.Services
 		public async Task<int> SaveBlog(BlogDto blogDto)
 		{
 			var blog = new Blog();
-			blog.CodigoBlog = blogDto.CodigoBlog;
 			blog.Titulo = blogDto.Titulo ?? "";
 			blog.Contenido = blogDto.Contenido ?? "";
 			blog.FechaCreacion = blogDto.FechaCreacion;
