@@ -33,14 +33,21 @@ namespace BlogPersonal.Controllers
 				CodigoEstadoUsuario = 1
 			};
 
-			var result = await _usuarioService.RegistrarUsuario(usuario);
-
-			if (!result)
+			try
 			{
-				return Conflict("El usuario ya existe.");
-			}
+				var result = await _usuarioService.RegistrarUsuario(usuario);
 
-			return Ok("Usuario registrado exitosamente.");
+				if (!result)
+				{
+					return Conflict("El usuario ya existe.");
+				}
+
+				return Ok("Usuario registrado exitosamente.");
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, $"Error interno: {ex.Message}");
+			}
 		}
 
 		// POST api/Usuario/login
@@ -60,6 +67,44 @@ namespace BlogPersonal.Controllers
 			}
 
 			return Ok(usuarioLogueado);
+		}
+
+		// POST api/Usuario/recuperar-password
+		[HttpPost("recuperar-password")]
+		public async Task<IActionResult> SolicitarRecuperacionPassword([FromBody] UsuarioRecuperarPasswordDto recuperarPasswordDto)
+		{
+			if (recuperarPasswordDto == null || string.IsNullOrEmpty(recuperarPasswordDto.Correo))
+			{
+				return BadRequest("El correo es requerido.");
+			}
+
+			var result = await _usuarioService.SolicitarRecuperacionPassword(recuperarPasswordDto.Correo);
+
+			if (!result)
+			{
+				return NotFound("El correo no se encuentra registrado.");
+			}
+
+			return Ok("Se ha enviado un correo con las instrucciones para recuperar la contraseña.");
+		}
+
+		// POST api/Usuario/restablecer-password
+		[HttpPost("restablecer-password")]
+		public async Task<IActionResult> RestablecerPassword([FromBody] UsuarioRestablecerPasswordDto restablecerPasswordDto)
+		{
+			if (restablecerPasswordDto == null || string.IsNullOrEmpty(restablecerPasswordDto.TokenRecuperacion) || string.IsNullOrEmpty(restablecerPasswordDto.NuevaPassword))
+			{
+				return BadRequest("Los datos proporcionados son inválidos.");
+			}
+
+			var result = await _usuarioService.RestablecerPassword(restablecerPasswordDto.TokenRecuperacion, restablecerPasswordDto.NuevaPassword);
+
+			if (!result)
+			{
+				return NotFound("El token de recuperación es inválido o ha expirado.");
+			}
+
+			return Ok("Contraseña restablecida correctamente.");
 		}
 	}
 }

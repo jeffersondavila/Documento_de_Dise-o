@@ -1,9 +1,6 @@
 ﻿using BlogPersonal.DTO;
-using BlogPersonal.Models;
 using BlogPersonal.Services;
 using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace BlogPersonal.Controllers
 {
@@ -49,10 +46,21 @@ namespace BlogPersonal.Controllers
 				return BadRequest("El blog o los datos requeridos están vacíos.");
 			}
 
-			var codigoBlog = await _blogService.SaveBlog(blog);
-			var savedBlog = await _blogService.GetBlog(codigoBlog);
+			try
+			{
+				var codigoBlog = await _blogService.SaveBlog(blog);
+				var savedBlog = await _blogService.GetBlog(codigoBlog);
 
-			return CreatedAtAction(nameof(GetBlog), new { id = savedBlog!.CodigoBlog }, savedBlog);
+				return CreatedAtAction(nameof(GetBlog), new { id = savedBlog!.CodigoBlog }, savedBlog);
+			}
+			catch (ArgumentException ex)
+			{
+				return BadRequest(ex.Message);
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, $"Error interno: {ex.Message}");
+			}
 		}
 
 		// PUT: api/Blog/5
@@ -74,7 +82,6 @@ namespace BlogPersonal.Controllers
 			return NoContent();
 		}
 
-
 		// DELETE: api/Blog/5
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteBlog(int id)
@@ -88,6 +95,5 @@ namespace BlogPersonal.Controllers
 			await _blogService.DeleteBlog(id);
 			return NoContent();
 		}
-
 	}
 }
