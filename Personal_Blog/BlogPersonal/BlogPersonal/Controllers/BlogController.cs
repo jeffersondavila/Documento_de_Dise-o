@@ -73,6 +73,7 @@ namespace BlogPersonal.Controllers
 			}
 
 			var blogActual = await _blogService.GetBlog(id);
+
 			if (blogActual == null)
 			{
 				return NotFound("El blog no se encontró.");
@@ -87,6 +88,7 @@ namespace BlogPersonal.Controllers
 		public async Task<IActionResult> DeleteBlog(int id)
 		{
 			var blog = await _blogService.GetBlog(id);
+
 			if (blog == null)
 			{
 				return NotFound("El blog no se encontró.");
