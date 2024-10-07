@@ -40,3 +40,8 @@ INSERT INTO EstadoUsuario (Estado) VALUES ('Inactivo');
 
 INSERT INTO EstadoBlog (Estado) VALUES ('Publicado');
 INSERT INTO EstadoBlog (Estado) VALUES ('Borrador');
+
+ALTER TABLE Usuario
+ADD 
+    FechaUltimoAcceso SMALLDATETIME NULL,
+    TokenRecuperacion VARCHAR(255) NULL;

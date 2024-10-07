@@ -15,6 +15,10 @@ public partial class Usuario
 
     public int CodigoEstadoUsuario { get; set; }
 
+    public DateTime? FechaUltimoAcceso { get; set; }
+
+    public string? TokenRecuperacion { get; set; }
+
     public virtual ICollection<Blog> Blogs { get; set; } = new List<Blog>();
 
     public virtual EstadoUsuario CodigoEstadoUsuarioNavigation { get; set; } = null!;

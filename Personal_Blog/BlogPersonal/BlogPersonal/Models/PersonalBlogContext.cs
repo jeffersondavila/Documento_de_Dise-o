@@ -31,7 +31,7 @@ public partial class PersonalBlogContext : DbContext
     {
         modelBuilder.Entity<Blog>(entity =>
         {
-            entity.HasKey(e => e.CodigoBlog).HasName("PK__Blog__87433BD275DBD262");
+            entity.HasKey(e => e.CodigoBlog).HasName("PK__Blog__87433BD2B95583CB");
 
             entity.ToTable("Blog");
 
@@ -57,11 +57,11 @@ public partial class PersonalBlogContext : DbContext
 
         modelBuilder.Entity<EstadoBlog>(entity =>
         {
-            entity.HasKey(e => e.CodigoEstadoBlog).HasName("PK__EstadoBl__D825BC86EF52DBA7");
+            entity.HasKey(e => e.CodigoEstadoBlog).HasName("PK__EstadoBl__D825BC86D53230BF");
 
             entity.ToTable("EstadoBlog");
 
-            entity.HasIndex(e => e.Estado, "UQ__EstadoBl__36DF552F139CA099").IsUnique();
+            entity.HasIndex(e => e.Estado, "UQ__EstadoBl__36DF552FB3F3FB09").IsUnique();
 
             entity.Property(e => e.Estado)
                 .HasMaxLength(50)
@@ -70,11 +70,11 @@ public partial class PersonalBlogContext : DbContext
 
         modelBuilder.Entity<EstadoUsuario>(entity =>
         {
-            entity.HasKey(e => e.CodigoEstadoUsuario).HasName("PK__EstadoUs__293148A64C52D11C");
+            entity.HasKey(e => e.CodigoEstadoUsuario).HasName("PK__EstadoUs__293148A6FBAF246C");
 
             entity.ToTable("EstadoUsuario");
 
-            entity.HasIndex(e => e.Estado, "UQ__EstadoUs__36DF552FCC9B7521").IsUnique();
+            entity.HasIndex(e => e.Estado, "UQ__EstadoUs__36DF552F959EB7B1").IsUnique();
 
             entity.Property(e => e.Estado)
                 .HasMaxLength(50)
@@ -83,19 +83,23 @@ public partial class PersonalBlogContext : DbContext
 
         modelBuilder.Entity<Usuario>(entity =>
         {
-            entity.HasKey(e => e.CodigoUsuario).HasName("PK__Usuario__F0C18F5843130879");
+            entity.HasKey(e => e.CodigoUsuario).HasName("PK__Usuario__F0C18F582484D445");
 
             entity.ToTable("Usuario");
 
-            entity.HasIndex(e => e.Correo, "UQ__Usuario__60695A19159C9439").IsUnique();
+            entity.HasIndex(e => e.Correo, "UQ__Usuario__60695A19168961C8").IsUnique();
 
             entity.Property(e => e.Correo)
                 .HasMaxLength(200)
                 .IsUnicode(false);
+            entity.Property(e => e.FechaUltimoAcceso).HasColumnType("smalldatetime");
             entity.Property(e => e.Nombre)
                 .HasMaxLength(200)
                 .IsUnicode(false);
             entity.Property(e => e.Password)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.TokenRecuperacion)
                 .HasMaxLength(255)
                 .IsUnicode(false);
 
