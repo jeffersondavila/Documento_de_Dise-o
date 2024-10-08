@@ -27,7 +27,6 @@ namespace BlogPersonal.DTO
 		public string? Password { get; set; }
 	}
 
-
 	public class UsuarioLoginDto
 	{
 		[Required(ErrorMessage = "El correo es requerido.")]
@@ -55,4 +54,9 @@ namespace BlogPersonal.DTO
 		public string? NuevaPassword { get; set; }
 	}
 
+	public class UsuarioLoginResponseDto
+	{
+		public string Token { get; set; }
+		public UsuarioDto Usuario { get; set; }
+	}
 }

@@ -59,14 +59,16 @@ namespace BlogPersonal.Controllers
 				return BadRequest("Correo o contraseña no proporcionados.");
 			}
 
-			var usuarioLogueado = await _usuarioService.IngresoUsuario(usuarioDto.Correo, usuarioDto.Password);
+			// Obtener el token y la información del usuario
+			var loginResponse = await _usuarioService.IngresoUsuario(usuarioDto.Correo, usuarioDto.Password);
 
-			if (usuarioLogueado == null)
+			if (loginResponse == null)
 			{
 				return Unauthorized("Correo o contraseña incorrectos.");
 			}
 
-			return Ok(usuarioLogueado);
+			// Retornar tanto el token como la información del usuario
+			return Ok(loginResponse);
 		}
 
 		// POST api/Usuario/recuperar-password

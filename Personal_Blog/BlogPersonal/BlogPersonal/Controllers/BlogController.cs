@@ -1,11 +1,14 @@
 ﻿using BlogPersonal.DTO;
 using BlogPersonal.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace BlogPersonal.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
+	[Authorize]
 	public class BlogController : ControllerBase
 	{
 		private readonly IBlogService _blogService;
@@ -15,11 +18,11 @@ namespace BlogPersonal.Controllers
 			_blogService = blogService;
 		}
 
-		// GET: api/Blog
+		// GET: api/Blog?pageNumber=1&pageSize=10
 		[HttpGet]
-		public async Task<IActionResult> GetAllBlog()
+		public async Task<IActionResult> GetAllBlog([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
 		{
-			var blogs = await _blogService.GetAllBlog();
+			var blogs = await _blogService.GetAllBlog(pageNumber, pageSize);
 			return Ok(blogs);
 		}
 
@@ -31,7 +34,7 @@ namespace BlogPersonal.Controllers
 
 			if (blog == null)
 			{
-				return NotFound();
+				return NotFound("El blog no se encontró.");
 			}
 
 			return Ok(blog);
@@ -46,9 +49,12 @@ namespace BlogPersonal.Controllers
 				return BadRequest("El blog o los datos requeridos están vacíos.");
 			}
 
+			// Obtener el userId del JWT Token
+			var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+
 			try
 			{
-				var codigoBlog = await _blogService.SaveBlog(blog);
+				var codigoBlog = await _blogService.SaveBlog(blog, userId);
 				var savedBlog = await _blogService.GetBlog(codigoBlog);
 
 				return CreatedAtAction(nameof(GetBlog), new { id = savedBlog!.CodigoBlog }, savedBlog);
@@ -56,6 +62,10 @@ namespace BlogPersonal.Controllers
 			catch (ArgumentException ex)
 			{
 				return BadRequest(ex.Message);
+			}
+			catch (UnauthorizedAccessException ex)
+			{
+				return Forbid(ex.Message); // 403 Forbidden
 			}
 			catch (Exception ex)
 			{
@@ -72,30 +82,52 @@ namespace BlogPersonal.Controllers
 				return BadRequest("Los datos del blog son inválidos.");
 			}
 
-			var blogActual = await _blogService.GetBlog(id);
+			// Obtener el userId del JWT Token
+			var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
 
-			if (blogActual == null)
+			try
 			{
-				return NotFound("El blog no se encontró.");
+				await _blogService.UpdateBlog(blog, id, userId);
+				return NoContent();
 			}
-
-			await _blogService.UpdateBlog(blog, id);
-			return NoContent();
+			catch (KeyNotFoundException ex)
+			{
+				return NotFound(ex.Message);
+			}
+			catch (UnauthorizedAccessException ex)
+			{
+				return Forbid(ex.Message); // 403 Forbidden
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, $"Error interno: {ex.Message}");
+			}
 		}
 
 		// DELETE: api/Blog/5
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteBlog(int id)
 		{
-			var blog = await _blogService.GetBlog(id);
+			// Obtener el userId del JWT Token
+			var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
 
-			if (blog == null)
+			try
 			{
-				return NotFound("El blog no se encontró.");
+				await _blogService.DeleteBlog(id, userId);
+				return NoContent();
 			}
-
-			await _blogService.DeleteBlog(id);
-			return NoContent();
+			catch (KeyNotFoundException ex)
+			{
+				return NotFound(ex.Message);
+			}
+			catch (UnauthorizedAccessException ex)
+			{
+				return Forbid(ex.Message); // 403 Forbidden
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, $"Error interno: {ex.Message}");
+			}
 		}
 	}
 }
