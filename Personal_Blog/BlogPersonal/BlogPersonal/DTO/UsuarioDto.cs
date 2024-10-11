@@ -2,6 +2,7 @@
 
 namespace BlogPersonal.DTO
 {
+	// Clase que obtiene toda la informacion del usuario logeado
 	public class UsuarioDto
 	{
 		public int CodigoUsuario { get; set; }
@@ -12,6 +13,14 @@ namespace BlogPersonal.DTO
 		public List<BlogDto> Blogs { get; set; } = new List<BlogDto>();
 	}
 
+	// Clase para obtener el token y la informacion de un usuario logeado
+	public class UsuarioLoginResponseDto
+	{
+		public string? Token { get; set; }
+		public UsuarioDto? Usuario { get; set; }
+	}
+
+	// Clase que obtiene la informacion necesaria para registrar a un usuario
 	public class UsuarioCreateDto
 	{
 		[Required(ErrorMessage = "El nombre es requerido.")]
@@ -27,6 +36,7 @@ namespace BlogPersonal.DTO
 		public string? Password { get; set; }
 	}
 
+	// Clase que obtiene la informacion necesaria para hacer un login
 	public class UsuarioLoginDto
 	{
 		[Required(ErrorMessage = "El correo es requerido.")]
@@ -37,6 +47,7 @@ namespace BlogPersonal.DTO
 		public string? Password { get; set; }
 	}
 
+	// Clase para obtener la informacion para recuperar la contraseña
 	public class UsuarioRecuperarPasswordDto
 	{
 		[Required(ErrorMessage = "El correo es requerido.")]
@@ -44,6 +55,7 @@ namespace BlogPersonal.DTO
 		public string? Correo { get; set; }
 	}
 
+	// Clase para obtener la informacion para restablecer la contraseña
 	public class UsuarioRestablecerPasswordDto
 	{
 		[Required(ErrorMessage = "El token de recuperación es requerido.")]
@@ -52,11 +64,5 @@ namespace BlogPersonal.DTO
 		[Required(ErrorMessage = "La nueva contraseña es requerida.")]
 		[StringLength(100, MinimumLength = 6, ErrorMessage = "La contraseña debe tener entre 6 y 100 caracteres.")]
 		public string? NuevaPassword { get; set; }
-	}
-
-	public class UsuarioLoginResponseDto
-	{
-		public string Token { get; set; }
-		public UsuarioDto Usuario { get; set; }
 	}
 }

@@ -11,15 +11,15 @@ namespace BlogPersonal.Services
 {
 	public class UsuarioService : IUsuarioService
 	{
+		private readonly IConfiguration _configuration;
 		private readonly PersonalBlogContext _blogContext;
 		private readonly PasswordHasher<Usuario> _passwordHasher;
-		private readonly IConfiguration _configuration;
 
 		public UsuarioService(PersonalBlogContext blogContext, IConfiguration configuration)
 		{
 			_blogContext = blogContext;
-			_passwordHasher = new PasswordHasher<Usuario>();
 			_configuration = configuration;
+			_passwordHasher = new PasswordHasher<Usuario>();
 		}
 
 		public async Task<bool> RegistrarUsuario(Usuario usuario)
