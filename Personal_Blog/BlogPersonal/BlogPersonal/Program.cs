@@ -1,5 +1,6 @@
 using BlogPersonal.Models;
 using BlogPersonal.Services;
+using BlogPersonal.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -33,23 +34,23 @@ if (builder.Environment.IsDevelopment())
 		});
 
 		c.AddSecurityRequirement(new OpenApiSecurityRequirement
-	{
 		{
-			new OpenApiSecurityScheme
 			{
-				Reference = new OpenApiReference
+				new OpenApiSecurityScheme
 				{
-					Type = ReferenceType.SecurityScheme,
-					Id = "Bearer"
-				}
-			},
-			Array.Empty<string>()
-		}
-	});
+					Reference = new OpenApiReference
+					{
+						Type = ReferenceType.SecurityScheme,
+						Id = "Bearer"
+					}
+				},
+				Array.Empty<string>()
+			}
+		});
 	});
 }
 
-// Configurar la autenticación JWT
+// Configurar la autenticación JWT (necesario para los esquemas y desafíos predeterminados)
 builder.Services.AddAuthentication(options =>
 {
 	options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -69,30 +70,6 @@ builder.Services.AddAuthentication(options =>
 		ClockSkew = TimeSpan.Zero, // Elimina la tolerancia de tiempo
 		RequireExpirationTime = true // Asegura que el token siempre tenga un tiempo de expiración
 	};
-
-	options.Events = new JwtBearerEvents
-	{
-		OnAuthenticationFailed = context =>
-		{
-			if (builder.Environment.IsDevelopment())
-			{
-				// En desarrollo, puedes escribir mensajes detallados sobre la falla de autenticación
-				Console.WriteLine("Token inválido: " + context.Exception.Message);
-			}
-			return Task.CompletedTask;
-		},
-		OnTokenValidated = context =>
-		{
-			Console.WriteLine("Token validado correctamente");
-			return Task.CompletedTask;
-		},
-		OnChallenge = context =>
-		{
-			// En desarrollo o producción, puedes mostrar la razón del desafío JWT fallido
-			Console.WriteLine("Desafío JWT fallido: " + context.ErrorDescription);
-			return Task.CompletedTask;
-		}
-	};
 });
 
 // Configurar los servicios personalizados (DbContext y Servicios)
@@ -109,18 +86,24 @@ if (app.Environment.IsDevelopment())
 	app.UseSwaggerUI(c =>
 	{
 		c.SwaggerEndpoint("/swagger/v1/swagger.json", "API de Blog Personal v1");
-		c.RoutePrefix = "swagger"; // Cambia el prefijo aquí si quieres acceder desde /swagger
+		c.RoutePrefix = "swagger";
 	});
-	app.UseDeveloperExceptionPage(); // Mostrar página de excepción detallada en desarrollo
+	// Mostrar página de excepción detallada en desarrollo
+	app.UseDeveloperExceptionPage();
 }
 else
 {
-	app.UseExceptionHandler("/Home/Error"); // Página genérica de errores en producción
-	app.UseHsts(); // Seguridad para forzar HTTPS en producción
+	app.UseExceptionHandler("/Home/Error");
+	app.UseHsts();
 }
 
 app.UseHttpsRedirection();
-app.UseAuthentication(); // Agregar autenticación
+
+// Invocar el middleware JWT para la validación de tokens
+app.UseMiddleware<JwtMiddleware>();
+
+// Mantener la autenticación
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
