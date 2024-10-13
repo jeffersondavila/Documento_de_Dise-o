@@ -5,21 +5,37 @@ using BlogPersonal.Extensions; // Importar las extensiones personalizadas
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Agregar servicios al contenedor
+// Se agregan servicios al contenedor
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerDocumentation(); // Agregar documentación de Swagger
-builder.Services.AddJwtAuthentication(builder.Configuration); // Agregar autenticación JWT
+
+// Se agrega Swagger al entorno de desarrollo
+if (builder.Environment.IsDevelopment())
+{
+	builder.Services.AddSwaggerDocumentation();
+}
+
+// Configurar la autenticación JWT desde las extensiones
+builder.Services.AddJwtAuthentication(builder.Configuration);
+
+// Configurar CORS desde las extensiones
+builder.Services.AddCustomCors(builder.Configuration);
+
+// Configurar los servicios personalizados (DbContext y Servicios)
 builder.Services.AddSqlServer<PersonalBlogContext>(builder.Configuration.GetConnectionString("dbConnection"));
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddScoped<IBlogService, BlogService>();
-builder.Services.AddCustomCors(builder.Configuration); // Agregar la política CORS personalizada
 
 var app = builder.Build();
 
-app.UseCustomExceptionHandling(app.Environment); // Configurar middleware de excepciones
-app.UseCustomCors(); // Aplicar middleware CORS personalizado
-app.UseMiddleware<JwtMiddleware>(); // Invocar el middleware JWT para la validación de tokens
+// Configurar middleware de excepciones y swagger solo en desarrollo
+app.UseCustomExceptionHandling(app.Environment);
+
+// Invocar el middleware JWT para la validación de tokens
+app.UseMiddleware<JwtMiddleware>();
+
+// Habilitar CORS en la aplicación
+app.UseCustomCors();
 
 // Mantener la autenticación y autorización
 app.UseAuthentication();
