@@ -16,8 +16,8 @@ namespace BlogPersonal.Controllers
 			_usuarioService = service;
 		}
 
-		// POST api/Usuario
-		[HttpPost]
+		// POST api/Usuario/sigup
+		[HttpPost("sigup")]
 		public async Task<IActionResult> Registrar([FromBody] UsuarioCreateDto usuarioDto)
 		{
 			if (usuarioDto == null || string.IsNullOrEmpty(usuarioDto.Correo) || string.IsNullOrEmpty(usuarioDto.Password))
