@@ -116,6 +116,7 @@ El sistema debe permitir a los usuarios autenticados crear, editar y eliminar co
 - Entity Framework In Memory
 - Entity Framework SQL SERVER
 - Entity Framework Tools
+- Authentication JwtBearer
 
 ### Crear Modelos
 ```csharp
