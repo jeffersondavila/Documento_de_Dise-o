@@ -51,7 +51,9 @@ namespace BlogPersonal.Services
 					new Claim(ClaimTypes.NameIdentifier, usuario.CodigoUsuario.ToString()),
 					new Claim(ClaimTypes.Name, usuario.Correo)
 				}),
-				Expires = DateTime.UtcNow.AddHours(1), // El token expira en 1 hora
+				Expires = DateTime.UtcNow.AddHours(1),
+				Issuer = _configuration["Jwt:Issuer"],
+				Audience = _configuration["Jwt:Audience"],
 				SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
 			};
 
