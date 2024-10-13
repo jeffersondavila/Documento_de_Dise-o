@@ -34,7 +34,7 @@ namespace BlogPersonal.Services
 
 		public async Task<IEnumerable<BlogDto?>> GetAllBlog(int pageNumber = 1, int pageSize = 10)
 		{
-			return await _blogContext.Blogs
+			var blogs = await _blogContext.Blogs
 				.Skip((pageNumber - 1) * pageSize)
 				.Take(pageSize)
 				.Select(x => new BlogDto
@@ -48,6 +48,13 @@ namespace BlogPersonal.Services
 					CodigoEstadoBlog = x.CodigoEstadoBlog
 				})
 				.ToListAsync();
+
+			if(blogs == null)
+			{
+				return null;
+			}
+
+			return blogs;
 		}
 
 		public async Task<BlogDto?> GetBlog(int id)
@@ -68,8 +75,7 @@ namespace BlogPersonal.Services
 
 			if (blog == null)
 			{
-				_logger.LogWarning($"Blog con ID {id} no encontrado.");
-				throw new KeyNotFoundException("El blog no fue encontrado.");
+				return null;
 			}
 
 			return blog;
