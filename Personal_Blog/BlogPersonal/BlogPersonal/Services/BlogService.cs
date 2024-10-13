@@ -51,7 +51,7 @@ namespace BlogPersonal.Services
 
 			if(blogs == null)
 			{
-				return null;
+				return null!;
 			}
 
 			return blogs;
