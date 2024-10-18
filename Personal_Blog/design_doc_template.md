@@ -36,7 +36,7 @@ El sistema debe permitir a los usuarios autenticados crear, editar y eliminar co
 * Como usuario registrado, quiero poder eliminar mi contenido que no es util.
 
 
-## Ccasos de uso No Soportados
+## Casos de uso No Soportados
 * Como usuario no registrado, quiero poder modificar un blog ya creado.
 * Como usuario no registrado, quiero crear un blog sin necesidad de estar autenticado.
 
@@ -44,20 +44,20 @@ El sistema debe permitir a los usuarios autenticados crear, editar y eliminar co
 
 ### Diagrama Caso de Uso
 
-![Markdown](./Diagramas/caso_de_uso_general.png)
+![Markdown](./Diagramas/1.caso_de_uso_general.png)
 
 ### Diagrama de arquitectura
 
-![Markdown](./Diagramas/arquitectura.png)
+![Markdown](./Diagramas/2.arquitectura.png)
 
 ### Diagrama de bajo nivel
-![Markdown](./Diagramas/bajo_nivel.png)
+![Markdown](./Diagramas/3.bajo_nivel.png)
 
 ### Entidad Relacion
 ![Markdown](./Base_de_datos/ER.png)
 
 ---
-## Planes y Limitaciones de Microsoft Azure
+## Despliegue: Planes y Limitaciones de Microsoft Azure
 
 ### 1. Plan Gratuito
 - **Precio:** Gratis
@@ -118,14 +118,23 @@ El sistema debe permitir a los usuarios autenticados crear, editar y eliminar co
 - Entity Framework Tools
 - Authentication JwtBearer
 
+### Crear .gitignore
+```csharp
+dotnet new gitignore
+```
+
 ### Crear Modelos
 ```csharp
 Scaffold-DbContext "Data Source=LAPTOP-07NSNMOC;Initial Catalog=PersonalBlog;user id=sa;password=loc@del@rea;TrustServerCertificate=True" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models
 ```
 
-### Crear .gitignore
+### Actualizar Modelos
 ```csharp
-dotnet new gitignore
+Add-Migration NombreDeLaMigracion
+```
+
+```csharp
+Update-Database
 ```
 
 ### Arquitectura Codigo
