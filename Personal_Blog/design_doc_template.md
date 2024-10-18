@@ -137,7 +137,18 @@ Add-Migration NombreDeLaMigracion
 Update-Database
 ```
 
-### Arquitectura Codigo
-- Model
-- Controller
+### Arquitectura Código
+
+La orientación sigue el patrón de diseño **Modelo Controlador Servicio**:
+- Models
+- Controllers
 - Services
+
+Con la aplicación de los principios **SOLID**, la estructura se ha expandido y reorganizado para mejorar la modularidad y mantener un código más legible y mantenible:
+- Models
+- Controllers
+- Services
+- DTO
+- Middlewares
+- Extensions
+- Migrations
