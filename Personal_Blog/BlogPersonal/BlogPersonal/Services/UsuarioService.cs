@@ -55,9 +55,9 @@ namespace BlogPersonal.Services
 					new Claim(ClaimTypes.NameIdentifier, usuario.CodigoUsuario.ToString()),
 					new Claim(ClaimTypes.Name, usuario.Correo)
 				}),
-				Expires = DateTime.UtcNow.AddHours(1), // Indica el tiempo de validez del token
-				Issuer = _configuration["Jwt:Issuer"], // Indica el emisor del token
-				Audience = _configuration["Jwt:Audience"], // Indica quien puede usar y validar el token
+				Expires = DateTime.UtcNow.AddHours(1), // Indica tiempo de validez del token
+				Issuer = _configuration["Jwt:Issuer"], // Emisor válido del token
+				Audience = _configuration["Jwt:Audience"], // Público válido del token
 				SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
 			};
 
