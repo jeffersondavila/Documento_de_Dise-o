@@ -1,7 +1,7 @@
 using BlogPersonal.Models;
 using BlogPersonal.Services;
 using BlogPersonal.Middlewares;
-using BlogPersonal.Extensions; // Importar las extensiones personalizadas
+using BlogPersonal.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 

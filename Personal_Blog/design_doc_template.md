@@ -111,6 +111,22 @@ El sistema debe permitir a los usuarios autenticados crear, editar y eliminar co
 
 ## Diseño
 
+### Patron de diseño
+
+La orientación sigue el patrón de diseño **Modelo Controlador Servicio**:
+- Models
+- Controllers
+- Services
+
+Con la aplicación de los principios **SOLID**, la estructura se ha expandido y reorganizado para mejorar la modularidad y mantener un código más legible y mantenible:
+- Models
+- Controllers
+- Services
+- DTO
+- Middlewares
+- Extensions
+- Migrations
+
 ### Paquetes
 - Entity Framework CORE
 - Entity Framework In Memory
@@ -136,19 +152,3 @@ Add-Migration NombreDeLaMigracion
 ```csharp
 Update-Database
 ```
-
-### Arquitectura Código
-
-La orientación sigue el patrón de diseño **Modelo Controlador Servicio**:
-- Models
-- Controllers
-- Services
-
-Con la aplicación de los principios **SOLID**, la estructura se ha expandido y reorganizado para mejorar la modularidad y mantener un código más legible y mantenible:
-- Models
-- Controllers
-- Services
-- DTO
-- Middlewares
-- Extensions
-- Migrations

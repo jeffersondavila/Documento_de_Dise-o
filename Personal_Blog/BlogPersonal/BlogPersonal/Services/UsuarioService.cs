@@ -24,15 +24,19 @@ namespace BlogPersonal.Services
 
 		public async Task<bool> RegistrarUsuario(Usuario usuario)
 		{
+			// Verifica existencia del correo del usuario que desea registrarse
 			var usuarioActual = await _blogContext.Usuarios.FirstOrDefaultAsync(u => u.Correo == usuario.Correo);
 
+			// Si regresa información es porque el usuario ya existe
 			if (usuarioActual != null)
 			{
 				return false;
 			}
 
+			// Encripta la contraseña ingresada por el usuario
 			usuario.Password = _passwordHasher.HashPassword(usuario, usuario.Password);
 
+			// Registra la información del usuario
 			_blogContext.Usuarios.Add(usuario);
 			await _blogContext.SaveChangesAsync();
 
@@ -42,7 +46,7 @@ namespace BlogPersonal.Services
 		private string GenerateJwtToken(Usuario usuario)
 		{
 			var tokenHandler = new JwtSecurityTokenHandler();
-			var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]!);
+			var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]!); // Obtiene clave secreta para firmar el token
 
 			var tokenDescriptor = new SecurityTokenDescriptor
 			{
@@ -51,18 +55,20 @@ namespace BlogPersonal.Services
 					new Claim(ClaimTypes.NameIdentifier, usuario.CodigoUsuario.ToString()),
 					new Claim(ClaimTypes.Name, usuario.Correo)
 				}),
-				Expires = DateTime.UtcNow.AddHours(1),
-				Issuer = _configuration["Jwt:Issuer"],
-				Audience = _configuration["Jwt:Audience"],
+				Expires = DateTime.UtcNow.AddHours(1), // Indica el tiempo de validez del token
+				Issuer = _configuration["Jwt:Issuer"], // Indica el emisor del token
+				Audience = _configuration["Jwt:Audience"], // Indica quien puede usar y validar el token
 				SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
 			};
 
+			// Crea el token y lo devuelve
 			var token = tokenHandler.CreateToken(tokenDescriptor);
 			return tokenHandler.WriteToken(token);
 		}
 
 		public async Task<UsuarioLoginResponseDto?> IngresoUsuario(string correo, string password)
 		{
+			// Busca usuario que coincida con el correo
 			var usuarioActual = await _blogContext.Usuarios
 				.Include(u => u.Blogs)
 				.FirstOrDefaultAsync(u => u.Correo == correo);
@@ -102,12 +108,14 @@ namespace BlogPersonal.Services
 
 		private bool VerificarPassword(Usuario usuario, string passwordIngresada)
 		{
+			// Valida la contraseña registrada por el usuario
 			var result = _passwordHasher.VerifyHashedPassword(usuario, usuario.Password, passwordIngresada);
 			return result == PasswordVerificationResult.Success;
 		}
 
 		public async Task<bool> SolicitarRecuperacionPassword(string correo)
 		{
+			// Busca el usuario para recuperara la contraseña
 			var usuario = await _blogContext.Usuarios.FirstOrDefaultAsync(u => u.Correo == correo);
 
 			if (usuario == null)
@@ -125,6 +133,7 @@ namespace BlogPersonal.Services
 
 		public async Task<bool> RestablecerPassword(string tokenRecuperacion, string nuevaPassword)
 		{
+			// Busca el token para restablecer la contraseña
 			var usuario = await _blogContext.Usuarios.FirstOrDefaultAsync(u => u.TokenRecuperacion == tokenRecuperacion);
 
 			if (usuario == null)
@@ -132,6 +141,7 @@ namespace BlogPersonal.Services
 				return false;
 			}
 
+			// Encripta la nueva contraseña ingresada por el usuario
 			usuario.Password = _passwordHasher.HashPassword(usuario, nuevaPassword);
 			usuario.TokenRecuperacion = null;
 
