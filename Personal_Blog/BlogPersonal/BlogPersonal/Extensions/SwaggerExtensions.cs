@@ -7,30 +7,34 @@ namespace BlogPersonal.Extensions
 	{
 		public static IServiceCollection AddSwaggerDocumentation(this IServiceCollection services)
 		{
+			// Agregar y configurar el generador de Swagger
 			services.AddSwaggerGen(c =>
 			{
+				// Definir el documento Swagger con información básica
 				c.SwaggerDoc("v1", new OpenApiInfo { Title = "API de Blog Personal", Version = "v1" });
 
-				// Configuración de JWT para Swagger
+				// Configuración para soportar autenticación JWT en Swagger
 				c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
 				{
-					Name = "Authorization",
-					Type = SecuritySchemeType.Http,
-					Scheme = "Bearer",
-					BearerFormat = "JWT",
-					In = ParameterLocation.Header,
-					Description = "Introduce el token JWT de esta manera: Bearer {tu token}"
+					Name = "Authorization", // Encabezado
+					Type = SecuritySchemeType.Http, // Esquema de seguridad
+					Scheme = "Bearer", // Esquema utilizado
+					BearerFormat = "JWT", // Formato del token esperado
+					In = ParameterLocation.Header, // Ubicación del encabezado donde se enviará el token
+					Description = "Introduce el JWT: Bearer {tu token}" // Descripcion en la interfaz
 				});
 
+				// Configuración de requerimientos de seguridad para la documentación de Swagger
 				c.AddSecurityRequirement(new OpenApiSecurityRequirement
 				{
 					{
+						// Especificar que el esquema de seguridad "Bearer" es requerido para acceder a la API
 						new OpenApiSecurityScheme
 						{
 							Reference = new OpenApiReference
 							{
-								Type = ReferenceType.SecurityScheme,
-								Id = "Bearer"
+								Type = ReferenceType.SecurityScheme, // Referencia al esquema de seguridad
+								Id = "Bearer" // Esquema utilizado
 							}
 						},
 						Array.Empty<string>()
@@ -38,6 +42,7 @@ namespace BlogPersonal.Extensions
 				});
 			});
 
+			// Retorna IServiceCollection para permitir la cadena de configuraciones
 			return services;
 		}
 	}

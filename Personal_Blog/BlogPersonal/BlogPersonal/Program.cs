@@ -9,19 +9,19 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-// Se agrega Swagger al entorno de desarrollo
+// Configurar Swagger en el entorno de desarrollo
 if (builder.Environment.IsDevelopment())
 {
 	builder.Services.AddSwaggerDocumentation();
 }
 
-// Configurar la autenticación JWT desde las extensiones
+// Configurar la autenticación JWT 
 builder.Services.AddJwtAuthentication(builder.Configuration);
 
-// Configurar CORS desde las extensiones
+// Configurar CORS
 builder.Services.AddCustomCors(builder.Configuration);
 
-// Configurar los servicios personalizados (DbContext y Servicios)
+// Configurar servicios personalizados (DbContext y Servicios)
 builder.Services.AddSqlServer<PersonalBlogContext>(builder.Configuration.GetConnectionString("dbConnection"));
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddScoped<IBlogService, BlogService>();
