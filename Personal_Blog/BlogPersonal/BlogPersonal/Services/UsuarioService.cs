@@ -24,7 +24,7 @@ namespace BlogPersonal.Services
 
 		public async Task<bool> RegistrarUsuario(Usuario usuario)
 		{
-			// Verifica existencia del correo del usuario que desea registrarse
+			// Busca usuario que coincida con el correo
 			var usuarioActual = await _blogContext.Usuarios.FirstOrDefaultAsync(u => u.Correo == usuario.Correo);
 
 			// Si regresa información es porque el usuario ya existe
@@ -48,6 +48,7 @@ namespace BlogPersonal.Services
 			var tokenHandler = new JwtSecurityTokenHandler();
 			var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]!); // Obtiene clave secreta para firmar el token
 
+			// Configurar propiedades del JWT
 			var tokenDescriptor = new SecurityTokenDescriptor
 			{
 				Subject = new ClaimsIdentity(new[]
@@ -55,7 +56,7 @@ namespace BlogPersonal.Services
 					new Claim(ClaimTypes.NameIdentifier, usuario.CodigoUsuario.ToString()),
 					new Claim(ClaimTypes.Name, usuario.Correo)
 				}),
-				Expires = DateTime.UtcNow.AddHours(1), // Indica tiempo de validez del token
+				Expires = DateTime.UtcNow.AddHours(1), // Tiempo de validez del token
 				Issuer = _configuration["Jwt:Issuer"], // Emisor válido del token
 				Audience = _configuration["Jwt:Audience"], // Público válido del token
 				SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -78,10 +79,10 @@ namespace BlogPersonal.Services
 				usuarioActual.FechaUltimoAcceso = DateTime.Now;
 				await _blogContext.SaveChangesAsync();
 
-				// Generar el token JWT
+				// Generar JWT
 				var token = GenerateJwtToken(usuarioActual);
 
-				// Devolver el token y la información del usuario
+				// Devolver token y la información del usuario
 				return new UsuarioLoginResponseDto
 				{
 					Token = token,
