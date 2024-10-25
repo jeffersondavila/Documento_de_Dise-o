@@ -23,58 +23,69 @@ namespace BlogPersonal.Middlewares
 			_logger = logger;
 		}
 
+		// Método Invoke que se ejecuta en cada solicitud HTTP
 		public async Task Invoke(HttpContext context)
 		{
+			// Obtiene el token JWT del encabezado "Authorization" de la solicitud, si está presente
 			var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
 
+			// Si el token no es nulo, intenta adjuntar la identidad del usuario al contexto
 			if (token != null)
 			{
 				AttachUserToContext(context, token);
 			}
 
-			await _next(context); // Pasa la solicitud al siguiente middleware en el pipeline
+			// Continúa con el siguiente middleware en el pipeline
+			await _next(context);
 		}
 
+		// Método que valida el token JWT y adjunta la información del usuario al contexto
 		private void AttachUserToContext(HttpContext context, string token)
 		{
 			try
 			{
 				var tokenHandler = new JwtSecurityTokenHandler();
+				// Obtiene la clave secreta usada para firmar el token
 				var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]!);
 
+				// Configuración de los parámetros de validación del token
 				tokenHandler.ValidateToken(token, new TokenValidationParameters
 				{
-					ValidateIssuerSigningKey = true,
-					IssuerSigningKey = new SymmetricSecurityKey(key),
-					ValidateIssuer = true,
-					ValidateAudience = true,
-					ValidIssuer = _configuration["Jwt:Issuer"],
-					ValidAudience = _configuration["Jwt:Audience"],
-					ValidateLifetime = true,
-					ClockSkew = TimeSpan.Zero // Elimina la tolerancia de tiempo
+					ValidateIssuerSigningKey = true, // Valida la clave de firma del token
+					IssuerSigningKey = new SymmetricSecurityKey(key), // Clave utilizada para validar la firma
+					ValidateIssuer = true, // Valida el emisor del token
+					ValidateAudience = true, // Valida el público del token
+					ValidIssuer = _configuration["Jwt:Issuer"], // Emisor permitido configurado
+					ValidAudience = _configuration["Jwt:Audience"], // Público permitido configurado
+					ValidateLifetime = true, // Valida la caducidad del token
+					ClockSkew = TimeSpan.Zero // Elimina la tolerancia en la validación del tiempo
 				}, out SecurityToken validatedToken);
 
+				// Si la validación es exitosa, obtiene el token JWT validado
 				var jwtToken = (JwtSecurityToken)validatedToken;
+				// Extrae el "userId" del claim del token con tipo "nameid"
 				var userId = jwtToken.Claims.First(x => x.Type == "nameid").Value;
 
-				// Adjuntar la identidad del usuario al contexto para su uso en los controladores
+				// Adjunta la identidad del usuario al contexto, para que esté disponible en los controladores
 				context.Items["User"] = userId;
 
+				// Registro informativo para indicar que el token fue validado correctamente
 				_logger.LogInformation($"JWT token validado correctamente para el usuario: {userId}");
 			}
 			catch (Exception ex)
 			{
-				// Si la validación falla, no hacer nada y registrar el error
 				_logger.LogWarning($"Error en la validación del token JWT: {ex.Message}");
 			}
 		}
 	}
 
-	// Método de extensión para agregar el middleware al pipeline de solicitudes HTTP
+	// Clase de extensión para agregar el middleware al pipeline de solicitudes HTTP
 	public static class JwtMiddlewareExtensions
 	{
+		// Método de extensión para simplificar la configuración del middleware en el startup
 		public static IApplicationBuilder UseJwtMiddleware(this IApplicationBuilder builder)
 		{
+			// Registra el middleware en la cadena de procesamiento
 			return builder.UseMiddleware<JwtMiddleware>();
 		}
 	}
