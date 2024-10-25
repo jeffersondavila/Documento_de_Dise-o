@@ -76,6 +76,7 @@ namespace BlogPersonal.Services
 
 			if (usuarioActual != null && VerificarPassword(usuarioActual, password))
 			{
+				// Registra fecha del ultimo ingreso
 				usuarioActual.FechaUltimoAcceso = DateTime.Now;
 				await _blogContext.SaveChangesAsync();
 
@@ -124,6 +125,7 @@ namespace BlogPersonal.Services
 				return false;
 			}
 
+			// Registra token de recuperacion
 			usuario.TokenRecuperacion = Guid.NewGuid().ToString();
 			await _blogContext.SaveChangesAsync();
 
@@ -134,7 +136,7 @@ namespace BlogPersonal.Services
 
 		public async Task<bool> RestablecerPassword(string tokenRecuperacion, string nuevaPassword)
 		{
-			// Busca el token para restablecer la contraseña
+			// Busca el token de recuperacion para restablecer la contraseña
 			var usuario = await _blogContext.Usuarios.FirstOrDefaultAsync(u => u.TokenRecuperacion == tokenRecuperacion);
 
 			if (usuario == null)
@@ -144,8 +146,11 @@ namespace BlogPersonal.Services
 
 			// Encripta la nueva contraseña ingresada por el usuario
 			usuario.Password = _passwordHasher.HashPassword(usuario, nuevaPassword);
+
+			// Limpia el token de recuperacion
 			usuario.TokenRecuperacion = null;
 
+			// Registra los cambios y restablece el usuario
 			await _blogContext.SaveChangesAsync();
 
 			return true;
