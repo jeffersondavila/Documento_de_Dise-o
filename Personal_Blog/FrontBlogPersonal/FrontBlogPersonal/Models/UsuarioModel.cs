@@ -1,26 +1,26 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FrontBlogPersonal.Dto
+namespace FrontBlogPersonal.Models
 {
-    public class UsuarioDto
+    public class UsuarioModel
     {
         public int CodigoUsuario { get; set; }
         public string? Nombre { get; set; }
         public string? Correo { get; set; }
         public int CodigoEstadoUsuario { get; set; }
         public DateTime? FechaUltimoAcceso { get; set; }
-        public List<BlogDto> Blogs { get; set; } = new List<BlogDto>();
+        public List<BlogModel> Blogs { get; set; } = new List<BlogModel>();
     }
 
     // Clase para obtener el token y la informacion de un usuario logeado
-    public class UsuarioLoginResponseDto
+    public class UsuarioLoginResponseModel
     {
         public string? Token { get; set; }
-        public UsuarioDto? Usuario { get; set; }
+        public UsuarioModel? Usuario { get; set; }
     }
 
     // Clase que obtiene la informacion necesaria para registrar a un usuario
-    public class UsuarioCreateDto
+    public class UsuarioCreateModel
     {
         [Required(ErrorMessage = "El nombre es requerido.")]
         [StringLength(200, ErrorMessage = "El nombre no debe exceder los 200 caracteres.")]
@@ -36,7 +36,7 @@ namespace FrontBlogPersonal.Dto
     }
 
     // Clase que obtiene la informacion necesaria para hacer un login
-    public class UsuarioLoginDto
+    public class UsuarioLoginModel
     {
         [Required(ErrorMessage = "El correo es requerido.")]
         [EmailAddress(ErrorMessage = "El correo no tiene un formato válido.")]
@@ -47,7 +47,7 @@ namespace FrontBlogPersonal.Dto
     }
 
     // Clase para obtener la informacion para recuperar la contraseña
-    public class UsuarioRecuperarPasswordDto
+    public class UsuarioRecuperarPasswordModel
     {
         [Required(ErrorMessage = "El correo es requerido.")]
         [EmailAddress(ErrorMessage = "El correo no tiene un formato válido.")]
@@ -55,7 +55,7 @@ namespace FrontBlogPersonal.Dto
     }
 
     // Clase para obtener la informacion para restablecer la contraseña
-    public class UsuarioRestablecerPasswordDto
+    public class UsuarioRestablecerPasswordModel
     {
         [Required(ErrorMessage = "El token de recuperación es requerido.")]
         public string? TokenRecuperacion { get; set; }

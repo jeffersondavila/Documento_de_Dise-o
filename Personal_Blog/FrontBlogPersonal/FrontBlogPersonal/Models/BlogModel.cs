@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FrontBlogPersonal.Dto
+namespace FrontBlogPersonal.Models
 {
-    public class BlogDto
+    public class BlogModel
     {
         public int CodigoBlog { get; set; }
 
