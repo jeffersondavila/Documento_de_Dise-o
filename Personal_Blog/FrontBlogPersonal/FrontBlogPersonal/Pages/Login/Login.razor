@@ -1,0 +1,100 @@
+﻿@page "/login"
+@inject IUsuarioService usuarioService;
+@inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+
+<h3>Iniciar Sesión</h3>
+
+<div class="login-container">
+    <div class="form-group">
+        <label for="correo">Correo Electrónico</label>
+        <input id="correo" type="email" class="form-control" @bind="correo" placeholder="Ingrese su correo electrónico" />
+        @if (!string.IsNullOrEmpty(correoError))
+        {
+            <small class="text-danger">@correoError</small>
+        }
+    </div>
+
+    <div class="form-group">
+        <label for="password">Contraseña</label>
+        <input id="password" type="password" class="form-control" @bind="password" placeholder="Ingrese su contraseña" />
+        @if (!string.IsNullOrEmpty(passwordError))
+        {
+            <small class="text-danger">@passwordError</small>
+        }
+    </div>
+
+    <button class="btn btn-primary mt-3" @onclick="HacerLogin" disabled="@cargando">Iniciar Sesión</button>
+
+    @if (!string.IsNullOrEmpty(loginError))
+    {
+        <div class="alert alert-danger mt-3">@loginError</div>
+    }
+</div>
+
+@code {
+    private string correo = string.Empty;
+    private string password = string.Empty;
+    private string? correoError = null;
+    private string? passwordError = null;
+    private string? loginError = null;
+    private bool cargando = false;
+
+    private async Task HacerLogin()
+    {
+        // Limpiar mensajes de error
+        correoError = null;
+        passwordError = null;
+        loginError = null;
+
+        // Validar datos
+        if (string.IsNullOrWhiteSpace(correo))
+        {
+            correoError = "El correo es obligatorio.";
+        }
+        else if (!new System.ComponentModel.DataAnnotations.EmailAddressAttribute().IsValid(correo))
+        {
+            correoError = "El formato del correo no es válido.";
+        }
+
+        if (string.IsNullOrWhiteSpace(password))
+        {
+            passwordError = "La contraseña es obligatoria.";
+        }
+
+        // Si hay errores, no continuar
+        if (!string.IsNullOrEmpty(correoError) || !string.IsNullOrEmpty(passwordError))
+        {
+            return;
+        }
+
+        try
+        {
+            cargando = true;
+
+            // Llamar al servicio de login
+            var resultado = await usuarioService.LoginAsync(correo, password);
+
+            if (resultado != null && !string.IsNullOrEmpty(resultado.Token))
+            {
+                // Guardar el token (por ejemplo, en local storage)
+                await LocalStorage.SetItemAsync("authToken", resultado.Token);
+
+                // Redirigir al usuario
+                NavigationManager.NavigateTo("/");
+            }
+            else
+            {
+                loginError = "Correo o contraseña incorrectos.";
+            }
+        }
+        catch (Exception ex)
+        {
+            loginError = $"Ocurrió un error al intentar iniciar sesión: {ex.Message}";
+        }
+        finally
+        {
+            cargando = false;
+        }
+    }
+}
