@@ -1,12 +1,31 @@
 ﻿<Router AppAssembly="@typeof(App).Assembly">
     <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
-        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+        @if (IsAuthenticated || NavigationManager.Uri.Contains("/login", StringComparison.OrdinalIgnoreCase))
+        {
+            <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+        }
+        else
+        {
+            // Redirige a la página de login sin usar RedirectLogin
+            NavigationManager.NavigateTo("/login");
+        }
     </Found>
     <NotFound>
-        <PageTitle>Not found</PageTitle>
         <LayoutView Layout="@typeof(MainLayout)">
             <p role="alert">Sorry, there's nothing at this address.</p>
         </LayoutView>
     </NotFound>
 </Router>
+
+@code {
+    private bool IsAuthenticated => CheckUserAuthentication();
+
+    private bool CheckUserAuthentication()
+    {
+        // Aquí iría tu lógica real para verificar si el usuario está autenticado.
+        return false; // Simula que no está autenticado.
+    }
+
+    [Inject]
+    private NavigationManager NavigationManager { get; set; }
+}

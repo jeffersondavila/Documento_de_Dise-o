@@ -1,0 +1,48 @@
+﻿@page "/login"
+@using FrontBlogPersonal.Models
+@inject NavigationManager NavigationManager
+
+<h3>Iniciar Sesión</h3>
+
+<EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label for="correo" class="form-label">Correo</label>
+        <InputText id="correo" class="form-control" @bind-Value="loginModel.Correo" />
+        <ValidationMessage For="@(() => loginModel.Correo)" />
+    </div>
+
+    <div class="mb-3">
+        <label for="password" class="form-label">Contraseña</label>
+        <InputText id="password" class="form-control" @bind-Value="loginModel.Password" Type="password" />
+        <ValidationMessage For="@(() => loginModel.Password)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Ingresar</button>
+</EditForm>
+
+@code {
+    private LoginModel loginModel = new();
+
+    private async Task HandleLogin()
+    {
+        // Simula autenticación. Aquí iría la lógica de tu API.
+        bool loginSuccessful = loginModel.Correo == "admin@admin.com" && loginModel.Password == "123456";
+
+        if (loginSuccessful)
+        {
+            Console.WriteLine($"Credenciales válidas: {loginSuccessful}");
+
+            // Redirigir al Home (o cualquier página autenticada).
+            NavigationManager.NavigateTo("/", true);
+        }
+        else
+        {
+            // Mostrar mensaje de error. Puedes agregar lógica aquí.
+            Console.WriteLine("Credenciales inválidas.");
+        }
+    }
+}
+
