@@ -18,12 +18,6 @@ namespace FrontBlogPersonal.Services
             };
         }
 
-        /// <summary>
-        /// Envía las credenciales de login y obtiene un token y la información del usuario.
-        /// </summary>
-        /// <param name="correo">Correo electrónico del usuario</param>
-        /// <param name="password">Contraseña del usuario</param>
-        /// <returns>Un UsuarioLoginResponseModel si el login es exitoso; null si falla.</returns>
         public async Task<UsuarioLoginResponseModel?> LoginAsync(string correo, string password)
         {
             try

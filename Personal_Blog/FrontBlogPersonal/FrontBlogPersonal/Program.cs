@@ -12,6 +12,7 @@ var urlApi = builder.Configuration.GetValue<string>("urlApi");
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(urlApi!) });
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
+builder.Services.AddScoped<IBlogService, BlogService>();
 builder.Services.AddBlazoredLocalStorage();
 
 await builder.Build().RunAsync();
