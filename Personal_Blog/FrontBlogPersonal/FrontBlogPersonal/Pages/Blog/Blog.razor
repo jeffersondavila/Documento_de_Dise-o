@@ -39,11 +39,11 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (CodigoBlog.HasValue)
+        if (CodigoBlog.HasValue && CodigoBlog > 0)
         {
             // Si hay un CódigoBlog, cargarlo desde el servicio para edición
             blogModel = await blogService.GetBlogById(CodigoBlog.Value)
-                        ?? throw new Exception("Blog no encontrado");
+                          ?? throw new Exception("Blog no encontrado");
         }
         else
         {
@@ -51,7 +51,7 @@
             blogModel = new BlogModel
                 {
                     FechaCreacion = DateTime.Now,
-                    CodigoEstadoBlog = 1 // Estado inicial por defecto, si aplica
+                    CodigoEstadoBlog = 1 // Estado inicial por defecto
                 };
         }
     }
@@ -60,13 +60,29 @@
     {
         if (blogModel.CodigoBlog == 0)
         {
-            // Insertar nuevo blog
-            // await blogService.CreateBlogAsync(blogModel);
+            // Crear un nuevo blog
+            var blogId = await blogService.SaveBlog(blogModel);
+            if (blogId.HasValue)
+            {
+                Console.WriteLine($"Blog creado con ID: {blogId}");
+            }
+            else
+            {
+                Console.WriteLine("Error al crear el blog.");
+            }
         }
         else
         {
-            // Actualizar blog existente
-            // await blogService.UpdateBlogAsync(blogModel);
+            // Actualizar un blog existente
+            var success = await blogService.UpdateBlog(blogModel.CodigoBlog, blogModel);
+            if (success)
+            {
+                Console.WriteLine("Blog actualizado exitosamente.");
+            }
+            else
+            {
+                Console.WriteLine("Error al actualizar el blog.");
+            }
         }
 
         // Redirigir a la lista de blogs después de guardar

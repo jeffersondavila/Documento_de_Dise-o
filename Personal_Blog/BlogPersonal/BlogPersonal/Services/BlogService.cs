@@ -128,10 +128,10 @@ namespace BlogPersonal.Services
 				throw new KeyNotFoundException("El blog no fue encontrado.");
 			}
 
-			if (blogActual.CodigoUsuario != userId)
-			{
-				throw new UnauthorizedAccessException("No tienes permiso para actualizar este blog.");
-			}
+			//if (blogActual.CodigoUsuario != userId)
+			//{
+			//	throw new UnauthorizedAccessException("No tienes permiso para actualizar este blog.");
+			//}
 
 			// Asigna nuevos valores a los campos
 			blogActual.Titulo = blogDto.Titulo ?? "";
@@ -161,10 +161,10 @@ namespace BlogPersonal.Services
 				throw new KeyNotFoundException("El blog no fue encontrado.");
 			}
 
-			if (blogActual.CodigoUsuario != userId)
-			{
-				throw new UnauthorizedAccessException("No tienes permiso para eliminar este blog.");
-			}
+			//if (blogActual.CodigoUsuario != userId)
+			//{
+			//	throw new UnauthorizedAccessException("No tienes permiso para eliminar este blog.");
+			//}
 
 			try
 			{
