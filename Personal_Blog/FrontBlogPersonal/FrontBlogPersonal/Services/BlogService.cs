@@ -24,20 +24,23 @@ namespace FrontBlogPersonal.Services
         {
             try
             {
+                // Construir la URL con parámetros
+                var url = $"api/Blog?pageNumber={pageNumber}&pageSize={pageSize}";
+
                 // Recuperar el token del almacenamiento local
                 var token = await localStorage.GetItemAsync<string>("authToken");
 
-                if (string.IsNullOrEmpty(token))
+                // Configurar el encabezado de autorización solo si el token existe
+                if (!string.IsNullOrEmpty(token))
                 {
-                    Console.WriteLine("No se encontró el token en el almacenamiento local.");
-                    return null;
+                    httpClient.DefaultRequestHeaders.Authorization =
+                        new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
                 }
-
-                // Configurar el encabezado de autorización
-                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-                // Construir la URL con parámetros
-                var url = $"api/Blog?pageNumber={pageNumber}&pageSize={pageSize}";
+                else
+                {
+                    // Si el token no existe, asegúrate de no enviar el encabezado de autorización
+                    httpClient.DefaultRequestHeaders.Authorization = null;
+                }
 
                 // Realizar la solicitud GET
                 var response = await httpClient.GetAsync(url);
@@ -58,6 +61,7 @@ namespace FrontBlogPersonal.Services
                 return null;
             }
         }
+
     }
 
     public interface IBlogService

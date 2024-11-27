@@ -20,7 +20,8 @@ namespace BlogPersonal.Controllers
 
 		// GET: api/Blog?pageNumber=1&pageSize=10
 		[HttpGet]
-		public async Task<IActionResult> GetAllBlog([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        [AllowAnonymous]
+        public async Task<IActionResult> GetAllBlog([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
 		{
 			var blogs = await _blogService.GetAllBlog(pageNumber, pageSize);
 			return Ok(blogs);
