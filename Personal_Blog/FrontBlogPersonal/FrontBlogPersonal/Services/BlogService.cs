@@ -20,7 +20,7 @@ namespace FrontBlogPersonal.Services
             };
         }
 
-        public async Task<List<BlogModel>?> GetBlogsAsync(int pageNumber, int pageSize)
+        public async Task<List<BlogModel>?> GetBlogs(int pageNumber, int pageSize)
         {
             try
             {
@@ -62,10 +62,51 @@ namespace FrontBlogPersonal.Services
             }
         }
 
+        public async Task<BlogModel?> GetBlogById(int codigoBlog)
+        {
+            try
+            {
+                // Recuperar el token del almacenamiento local
+                var token = await localStorage.GetItemAsync<string>("authToken");
+
+                // Verificar si el token está presente
+                if (string.IsNullOrEmpty(token))
+                {
+                    Console.WriteLine("No se encontró un token válido en el almacenamiento local. La solicitud no se realizará.");
+                    return null; // O lanzar una excepción, dependiendo de cómo manejes los errores en tu aplicación
+                }
+
+                // Configurar el encabezado de autorización
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+                // Construir la URL
+                var url = $"api/Blog/{codigoBlog}";
+
+                // Realizar la solicitud GET
+                var response = await httpClient.GetAsync(url);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    // Leer y deserializar la respuesta
+                    var json = await response.Content.ReadAsStringAsync();
+                    return JsonSerializer.Deserialize<BlogModel>(json, jsonSerializerOptions);
+                }
+
+                // Manejar errores de la solicitud
+                Console.WriteLine($"Error al obtener el blog con ID {codigoBlog}: {response.StatusCode}");
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Excepción al obtener el blog con ID {codigoBlog}: {ex.Message}");
+                return null;
+            }
+        }
     }
 
     public interface IBlogService
     {
-        Task<List<BlogModel>?> GetBlogsAsync(int pageNumber, int pageSize);
+        Task<List<BlogModel>?> GetBlogs(int pageNumber, int pageSize);
+        Task<BlogModel?> GetBlogById(int codigoBlog);
     }
 }

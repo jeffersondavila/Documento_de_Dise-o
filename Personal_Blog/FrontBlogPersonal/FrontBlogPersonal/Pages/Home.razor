@@ -1,5 +1,7 @@
 ﻿@page "/"
 @inject IBlogService blogService
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject NavigationManager navigationManager
 
 <h3>Listado de Blogs</h3>
 
@@ -21,6 +23,14 @@ else
                     <h3>@blog.Titulo</h3>
                     <p>@blog.Contenido</p>
                     <small>Creado el: @blog.FechaCreacion.ToString("dd/MM/yyyy")</small>
+
+                    @if (isAuthenticated)
+                    {
+                        <br />
+                        <button class="btn btn-primary" @onclick="() => NavigateToBlogDetail(blog.CodigoBlog)">
+                            Ver Detalle
+                        </button>
+                    }
                 </div>
             </div>
         }
@@ -29,9 +39,21 @@ else
 
 @code {
     private List<BlogModel>? blogs;
+    private bool isAuthenticated;
 
     protected override async Task OnInitializedAsync()
     {
-        blogs = await blogService.GetBlogsAsync(1, 10);
+        // Verificar si el token existe en el localStorage
+        var token = await localStorage.GetItemAsync<string>("authToken");
+        isAuthenticated = !string.IsNullOrEmpty(token);
+
+        // Cargar los blogs
+        blogs = await blogService.GetBlogs(1, 10);
+    }
+
+    private void NavigateToBlogDetail(int blogId)
+    {
+        // Navegar a la página de detalles del blog
+        navigationManager.NavigateTo($"/blog/{blogId}");
     }
 }

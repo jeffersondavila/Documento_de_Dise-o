@@ -1,0 +1,81 @@
+﻿@page "/blog/{CodigoBlog:int?}"
+@inject IBlogService blogService
+@inject NavigationManager navigationManager
+
+<h3>@(blogModel.CodigoBlog == 0 ? "Crear Blog" : "Editar Blog")</h3>
+
+<EditForm Model="blogModel" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="titulo">Título</label>
+        <InputText id="titulo" class="form-control" @bind-Value="blogModel.Titulo" />
+        <ValidationMessage For="@(() => blogModel.Titulo)" />
+    </div>
+
+    <div class="form-group">
+        <label for="contenido">Contenido</label>
+        <InputTextArea id="contenido" class="form-control" @bind-Value="blogModel.Contenido" />
+        <ValidationMessage For="@(() => blogModel.Contenido)" />
+    </div>
+
+    <div class="form-group">
+        <label for="codigoEstadoBlog">Estado del Blog</label>
+        <InputNumber id="codigoEstadoBlog" class="form-control" @bind-Value="blogModel.CodigoEstadoBlog" />
+        <ValidationMessage For="@(() => blogModel.CodigoEstadoBlog)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Guardar</button>
+    <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancelar</button>
+</EditForm>
+
+@code {
+    [Parameter] public int? CodigoBlog { get; set; }
+    private BlogModel blogModel = new BlogModel
+        {
+            FechaCreacion = DateTime.Now
+        };
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (CodigoBlog.HasValue)
+        {
+            // Si hay un CódigoBlog, cargarlo desde el servicio para edición
+            blogModel = await blogService.GetBlogById(CodigoBlog.Value)
+                        ?? throw new Exception("Blog no encontrado");
+        }
+        else
+        {
+            // Si no hay CódigoBlog, inicializar para un nuevo blog
+            blogModel = new BlogModel
+                {
+                    FechaCreacion = DateTime.Now,
+                    CodigoEstadoBlog = 1 // Estado inicial por defecto, si aplica
+                };
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (blogModel.CodigoBlog == 0)
+        {
+            // Insertar nuevo blog
+            // await blogService.CreateBlogAsync(blogModel);
+        }
+        else
+        {
+            // Actualizar blog existente
+            // await blogService.UpdateBlogAsync(blogModel);
+        }
+
+        // Redirigir a la lista de blogs después de guardar
+        navigationManager.NavigateTo("/");
+    }
+
+    private void Cancel()
+    {
+        // Redirigir a la lista de blogs sin guardar
+        navigationManager.NavigateTo("/");
+    }
+}
