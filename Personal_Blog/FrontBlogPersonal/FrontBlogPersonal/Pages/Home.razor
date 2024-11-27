@@ -28,11 +28,11 @@ else
                     @if (isAuthenticated)
                     {
                         <br />
-                        <button class="btn btn-primary" @onclick="() => NavigateToBlogDetail(blog.CodigoBlog)">
-                            Ver Detalle
+                        <button class="btn btn-primary me-2" title="Ver Detalle" @onclick="() => NavigateToBlogDetail(blog.CodigoBlog)">
+                            <i class="bi bi-eye" aria-hidden="true"></i>
                         </button>
-                        <button class="btn btn-danger" @onclick="() => DeleteBlog(blog.CodigoBlog)">
-                            Eliminar
+                        <button class="btn btn-danger" title="Eliminar Blog" @onclick="() => DeleteBlog(blog.CodigoBlog)">
+                            <i class="bi bi-trash" aria-hidden="true"></i>
                         </button>
                     }
                 </div>
