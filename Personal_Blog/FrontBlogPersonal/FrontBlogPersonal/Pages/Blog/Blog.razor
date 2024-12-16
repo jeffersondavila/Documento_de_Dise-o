@@ -1,6 +1,7 @@
 ﻿@page "/blog/{CodigoBlog:int?}"
 @inject IBlogService blogService
 @inject NavigationManager navigationManager
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
 <h3>@(blogModel.CodigoBlog == 0 ? "Crear Blog" : "Editar Blog")</h3>
 
@@ -33,26 +34,28 @@
 @code {
     [Parameter] public int? CodigoBlog { get; set; }
     private BlogModel blogModel = new BlogModel
-        {
-            FechaCreacion = DateTime.Now
-        };
+    {
+        FechaCreacion = DateTime.Now
+    };
 
     protected override async Task OnInitializedAsync()
     {
         if (CodigoBlog.HasValue && CodigoBlog > 0)
         {
             // Si hay un CódigoBlog, cargarlo desde el servicio para edición
-            blogModel = await blogService.GetBlogById(CodigoBlog.Value)
-                          ?? throw new Exception("Blog no encontrado");
+            blogModel = await blogService.GetBlogById(CodigoBlog.Value) ?? throw new Exception("Blog no encontrado");
         }
         else
         {
+            var codigoUsuario = await LocalStorage.GetItemAsync<int?>("codigoUsuario"); // Usa el tipo adecuado según cómo guardaste el valor
+
             // Si no hay CódigoBlog, inicializar para un nuevo blog
             blogModel = new BlogModel
-                {
-                    FechaCreacion = DateTime.Now,
-                    CodigoEstadoBlog = 1 // Estado inicial por defecto
-                };
+            {
+                CodigoUsuario = codigoUsuario ?? 0,
+                FechaCreacion = DateTime.Now,
+                CodigoEstadoBlog = 1 // Estado inicial por defecto
+            };
         }
     }
 

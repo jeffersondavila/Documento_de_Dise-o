@@ -49,6 +49,7 @@
             {
                 // Guardar el token en LocalStorage
                 await LocalStorage.SetItemAsync("authToken", resultado.Token);
+                await LocalStorage.SetItemAsync("codigoUsuario", resultado.Usuario!.CodigoUsuario);
 
                 // Redirigir al usuario
                 NavigationManager.NavigateTo("/");
